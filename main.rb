@@ -18,22 +18,27 @@ def print_board(spaces, game_board=[])
   end  
 end
 
-def possible_moves(starting=[0,0], finish=[3,3], moves=[], spaces)
-  p "This is starting #{starting}"
-  i = starting[0]
-  j = starting[1]
-  p moves << starting
+def possible_moves(starting, finish, moves=[], turns=[], spaces)
+  p "Starting with: #{starting}"
+  i = starting.clone[0]
+  j = starting.clone[1]
+
   p moves << move = [i + 1, j + 2] 
   p moves << move2 = [i +2, j +1] 
   p moves << move3 = [i-1, j-1] 
   p moves << move4 = [i-2, j-2]
-  p "This is moves #{moves}"
+  moves
   p "This is after legal moves"
   p keep_legal_first_visit(spaces, moves)
+  turns << moves
   if moves.include?(finish)
-    return moves
+    p turns
+    return turns
+  else
+    moves.each do |move|
+      possible_moves(move, finish, moves=[], turns, spaces)
+    end  
   end
-  possible_moves(moves[-1], [3,3], spaces)
 end
 
 def keep_legal_first_visit(spaces, moves)
@@ -55,8 +60,5 @@ def first_visit?(move, moves)
   true
 end
 p spaces = board() 
-#print_board(spaces)
-#moves(game_board)
-#puts "The knight is at #{game_board[2][1]} and wants to end at #{game_board[0][0]}"
-p possible_moves(spaces)
-p legal_move?([4,4], spaces)
+possible_moves([0,0], [3,3], spaces)
+p legal_move?([3,3], spaces)
