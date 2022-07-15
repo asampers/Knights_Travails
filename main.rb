@@ -18,27 +18,45 @@ def print_board(spaces, game_board=[])
   end  
 end
 
-def possible_moves(starting, finish, moves=[], turns=[], spaces)
+def make_moves(starting, moves=[], turns=[], spaces)
   p "Starting with: #{starting}"
   i = starting.clone[0]
   j = starting.clone[1]
 
-  p moves << move = [i + 1, j + 2] 
-  p moves << move2 = [i +2, j +1] 
-  p moves << move3 = [i-1, j-1] 
-  p moves << move4 = [i-2, j-2]
+  moves << move = [i+1, j+2] 
+  moves << move2 = [i+2, j+1] 
+  moves << move3 = [i-1, j-2] 
+  moves << move4 = [i-2, j-1]
+  moves << move5 = [i+1, j-2]
+  moves << move6 = [i+2, j-1]
+  moves << move7 = [i-1, j+2]
+  moves << move8 = [i-2, j+1]
   moves
-  p "This is after legal moves"
   p keep_legal_first_visit(spaces, moves)
   turns << moves
-  if moves.include?(finish)
-    p turns
-    return turns
-  else
-    moves.each do |move|
-      possible_moves(move, finish, moves=[], turns, spaces)
-    end  
+end
+
+def all_possible_moves(turns, finish, spaces)
+  turns.each_with_index do |turn, index|
+    turn.each do |move|
+      if move == finish
+        return turns
+      end 
+      make_moves(move, moves=[], turns, spaces)
+    end
   end
+
+  
+  #end 
+  #moves.each do |move|  
+  #  possible_moves(move, finish, moves=[], turns, spaces)
+  #end 
+  return turns 
+end
+
+def knight_moves(starting, finish, turns, spaces)
+  return if starting == finish
+  return
 end
 
 def keep_legal_first_visit(spaces, moves)
@@ -60,5 +78,6 @@ def first_visit?(move, moves)
   true
 end
 p spaces = board() 
-possible_moves([0,0], [3,3], spaces)
-p legal_move?([3,3], spaces)
+#p make_moves([4,2], spaces)
+#p legal_move?([3,3], spaces)
+all_possible_moves([[[1,1],[3,4]], [[4,6],[7,3]], [[2,4],[3,3]]], [5,3], spaces)
