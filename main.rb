@@ -20,9 +20,35 @@ class Game
     end  
   end
 
-  def knight_moves(starting, finish, turns, spaces)
-    
-    
+  def knight_moves(starting, finish, spaces=self.board.spaces)
+    @pieces.make_all_possible_moves(starting, finish, spaces)
+    p "This is starting #{starting}"
+    current = finish.clone
+    times = find_path(visited=@pieces.visited, times=0, moves=[], current, starting, finish)
+  
+  puts "You made it in #{times} moves! Here's your path:"
+  p moves << finish
+  end
+
+  def find_path(visited, times, moves, current, starting, finish)
+    until moves.include?(starting)
+      p "This is now current #{current}"
+      p "And this is starting #{starting}"
+      visited.each_pair do |key, value|
+          if value.include?(current)
+            current = key
+            p "This becomes current #{current}"
+            moves.unshift(key)
+            p moves
+            times +=1
+            p "Turns: #{times}."
+            p "This was triggered because this is the value #{value}"
+            return times if current == starting
+          end 
+      end
+      
+    end  
+          
   end
 
 end
@@ -120,6 +146,8 @@ class Knight < Game
 
 end
 
+
+
 #p make_moves([4,2], spaces)
 #p legal_move?([3,3], spaces)
 #make_all_possible_moves([[[1,1],[3,4]], [[4,6],[7,3]], [[2,4],[3,3]]], [5,3], spaces)
@@ -128,6 +156,6 @@ game = Game.new
 game.print_board
 tim = Knight.new
 p game.pieces
+game.knight_moves([3,3], [4,3])
 
-tim.make_all_possible_moves([0,0], [2,6], game.board.spaces)
-p tim.visited
+#p game.pieces.visited
