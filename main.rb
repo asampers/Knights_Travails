@@ -22,33 +22,30 @@ class Game
 
   def knight_moves(starting, finish, spaces=self.board.spaces)
     @pieces.make_all_possible_moves(starting, finish, spaces)
-    p "This is starting #{starting}"
-    current = finish.clone
-    times = find_path(visited=@pieces.visited, times=0, moves=[], current, starting, finish)
+    times = find_path(visited=@pieces.visited, times=0, moves=[], current=finish.clone, starting)
   
-  puts "You made it in #{times} moves! Here's your path:"
-  p moves << finish
+    puts "You made it in #{times} moves! Here's your path:"
+    p moves << finish
+    clear_pieces_values(finish)
   end
 
-  def find_path(visited, times, moves, current, starting, finish)
+  def clear_pieces_values(finish)
+    @pieces.location = finish
+    @pieces.visited = {}
+    @pieces.turns = []
+  end
+
+  def find_path(visited, times, moves, current, starting)
     until moves.include?(starting)
-      p "This is now current #{current}"
-      p "And this is starting #{starting}"
       visited.each_pair do |key, value|
           if value.include?(current)
             current = key
-            p "This becomes current #{current}"
             moves.unshift(key)
-            p moves
             times +=1
-            p "Turns: #{times}."
-            p "This was triggered because this is the value #{value}"
             return times if current == starting
           end 
       end
-      
-    end  
-          
+    end         
   end
 
 end
@@ -106,8 +103,6 @@ class Knight < Game
   def make_moves(starting, finish, moves=[], turns, visited, spaces)
     return if turns.include?(finish)
     @location = [starting[0], starting[1]]
-
-    puts "From #{@location} the knight could get to:"
     i = starting.clone[0]
     j = starting.clone[1]
 
@@ -120,27 +115,22 @@ class Knight < Game
     moves << move7 = [i-1, j+2]
     moves << move8 = [i-2, j+1]
     moves
-    p keep_legal_first_visit(spaces, moves, turns)
+    keep_legal_first_visit(spaces, moves, turns)
     moves
     visited[starting] = moves unless moves.empty?
     turns << moves unless moves.empty? 
-    
   end
 
   def make_all_possible_moves(starting, finish, turns=@turns, visited=@visited, spaces)
-      
       make_first_move(starting, finish, turns, visited, spaces)
       turns.each_with_index do |turn, index|
           if turn.include?(finish)
-            #puts "The finish is in index #{index}"
             return 
           end  
           turn.each do |move|
-            puts "This is index #{index}"
             make_moves(move, finish, moves=[], turns, visited, spaces)
           end   
       end
-    
     return visited 
   end
 
@@ -154,8 +144,9 @@ end
 
 game = Game.new
 game.print_board
-tim = Knight.new
-p game.pieces
+
 game.knight_moves([3,3], [4,3])
 
-#p game.pieces.visited
+p game.pieces.visited
+p game.pieces.location
+p game.pieces.turns
